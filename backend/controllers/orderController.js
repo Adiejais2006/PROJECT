@@ -1,5 +1,6 @@
 // PLACING ORDERS USING COD
 import orderModel from "../models/orderModel.js";
+import productModel from "../models/productModel.js";
 import userModel from "../models/userModel.js";
 import Stripe from "stripe";
 import razorpay from "razorpay";
@@ -13,9 +14,39 @@ const razorpayInstance = new razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_SECRET_KEY,
 });
+const validateStock = async (items) => {
+  for (const item of items) {
+    const product = await productModel.findById(item._id);
+    if (!product) {
+      return {
+        success: false,
+        message: `${item.name} no longer exists.`,
+      };
+    }
+    if (product.stock < item.quantity) {
+      return {
+        success: false,
+        message: `${item.name} has only ${product.stock} item(s) left in stock.`,
+      };
+    }
+  }
+  return { success: true };
+};
+
+const deductStock = async (items) => {
+  for (const item of items) {
+    const product = await productModel.findById(item._id);
+    product.stock -= item.quantity;
+    await product.save();
+  }
+};
 const placeOrder = async (req, res) => {
   try {
     const { userId, items, amount, address } = req.body;
+    const stockResult = await validateStock(items);
+    if (!stockResult.success) {
+      return res.json(stockResult);
+    }
     const orderData = {
       userId,
       items,
@@ -27,8 +58,8 @@ const placeOrder = async (req, res) => {
     };
     const newOrder = new orderModel(orderData);
     await newOrder.save();
+    await deductStock(items);
     await userModel.findByIdAndUpdate(userId, { cartData: {} });
-
     res.json({ success: true, message: "Order Placed" });
   } catch (error) {
     console.log(error);
@@ -49,6 +80,10 @@ const placeOrderStripe = async (req, res) => {
       payment: false,
       date: Date.now(),
     };
+    const stockResult = await validateStock(items);
+    if (!stockResult.success) {
+      return res.json(stockResult);
+    }
     const newOrder = new orderModel(orderData);
     await newOrder.save();
 
@@ -95,6 +130,8 @@ const verifyStripe = async (req, res) => {
   const { orderId, success, userId } = req.body;
   try {
     if (success === "true") {
+      const order = await orderModel.findById(orderId);
+      await deductStock(order.items);
       await orderModel.findByIdAndUpdate(orderId, { payment: true });
       await userModel.findByIdAndUpdate(userId, { cartData: {} });
       res.json({ success: true });
@@ -121,6 +158,10 @@ const placeOrderRazorpay = async (req, res) => {
       payment: false,
       date: Date.now(),
     };
+    const stockResult = await validateStock(items);
+    if (!stockResult.success) {
+      return res.json(stockResult);
+    }
     const newOrder = new orderModel(orderData);
     await newOrder.save();
     const options = {
@@ -148,6 +189,8 @@ const verifyRazorpay = async (req, res) => {
     const orderInfo = await razorpayInstance.orders.fetch(razorpay_order_id);
 
     if (orderInfo.status === "paid") {
+      const order = await orderModel.findById(orderInfo.receipt);
+      await deductStock(order.items);
       await orderModel.findByIdAndUpdate(orderInfo.receipt, { payment: true });
       await userModel.findByIdAndUpdate(userId, { cartData: {} });
       res.json({ success: true, message: "Payment successfull" });

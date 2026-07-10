@@ -17,6 +17,7 @@ const PlaceOrder = () => {
     getCartAmount,
     deliveryfee,
     products,
+    getProductsData,
   } = useContext(ShopContext);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -52,8 +53,9 @@ const PlaceOrder = () => {
           );
 
           if (data.success) {
-            navigate("/orders");
             setCartItems({});
+            await getProductsData();
+            navigate("/orders");
           }
         } catch (error) {
           console.log(error);
@@ -105,6 +107,7 @@ const PlaceOrder = () => {
 
           if (response.data.success) {
             setCartItems({});
+            await getProductsData();
             navigate("/orders");
           } else {
             toast.error(response.data.message);

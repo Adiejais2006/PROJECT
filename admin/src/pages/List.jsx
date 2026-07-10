@@ -11,7 +11,9 @@ const List = ({ token }) => {
     try {
       const response = await axios.get(backendurl + "/api/product/list");
       setList(response.data.products);
-    } catch (error) {}
+    } catch (error) {
+      toast.error(error.message); 
+    }
   };
 
   const removeProduct = async (id) => {
@@ -46,18 +48,19 @@ const List = ({ token }) => {
       <p className="mb-2">All Products List</p>
       <div className="flex flex-col gap-2">
         {/* -----------------LIST TABLE TITLE ----------------- */}
-        <div className="hidden md:grid grid-cols-[1fr_3fr_1fr_1fr_1fr] items-center  py-1 px-2 border border-gray-100 bg-gray-100 text-sm">
+        <div className="hidden md:grid grid-cols-[1fr_3fr_1fr_1fr_1fr_1fr] items-center  py-1 px-2 border border-gray-100 bg-gray-100 text-sm">
           <b>Image</b>
           <b>Name</b>
           <b>Category</b>
           <b>Price</b>
+          <b>Stock</b>
           <b className="text-center">Action</b>
         </div>
 
         {/* ---------------------PRODUCT LIST ------------------- */}
         {list.map((item, index) => (
           <div
-            className="grid grid-cols-[1fr_3fr_1fr] md:grid-cols-[1fr_3fr_1fr_1fr_1fr] items-center gap-2 py-1 px-2 border border-gray-200 text-sm"
+            className="grid grid-cols-[1fr_3fr_1fr] md:grid-cols-[1fr_3fr_1fr_1fr_1fr_1fr] items-center gap-2 py-1 px-2 border border-gray-200 text-sm"
             key={index}
           >
             <img className="w-12" src={item.image[0]} alt={item.name} />
@@ -66,6 +69,17 @@ const List = ({ token }) => {
             <p>
               {currency}
               {item.price}
+            </p>
+            <p
+              className={`font-semibold ${
+                item.stock === 0
+                  ? "text-red-600"
+                  : item.stock <= 5
+                    ? "text-yellow-600"
+                    : "text-green-600"
+              }`}
+            >
+              {item.stock === 0 ? "Out of Stock" : item.stock}
             </p>
             <p
               onClick={() => {

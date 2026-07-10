@@ -58,9 +58,23 @@ const Product = () => {
             {currency}
             {productData.price}
           </p>
+          <div className="mt-3">
+            {productData.stock > 5 ? (
+              <p className="text-green-600 font-medium">
+                In Stock ({productData.stock} available)
+              </p>
+            ) : productData.stock > 0 ? (
+              <p className="text-yellow-600 font-medium">
+                Only {productData.stock} left!
+              </p>
+            ) : (
+              <p className="text-red-600 font-medium">Out of Stock</p>
+            )}
+          </div>
           <p className="mt-5 text-gray-500 md:w-4/5">
             {productData.description}
           </p>
+
           <div className="flex flex-col gap-4 my-8">
             <p>Select Size</p>
             <div className="flex gap-2">
@@ -76,10 +90,11 @@ const Product = () => {
             </div>
           </div>
           <button
+            disabled={productData.stock === 0}
             onClick={() => addToCart(productData._id, size)}
-            className="bg-black text-white px-8 py-3 text-sm active:bg-gray-700"
+            className={`bg-black text-white px-8 py-3  text-sm active:bg-gray-700 ${productData.stock === 0 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
           >
-            ADD TO CART
+            {productData.stock === 0 ? "OUT OF STOCK" : "ADD TO CART"}
           </button>
           <hr className="mt-8 sm:w-4/5 border-gray-200" />
           <div className="text-sm text-gray-500 mt-5 flex flex-col gap-1">

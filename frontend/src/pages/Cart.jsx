@@ -76,7 +76,7 @@ const Cart = () => {
                         Number(e.target.value),
                       )
                 }
-                defaultValue={item.quantity}
+                value={item.quantity}
                 className="border border-gray-200 max-w-10 sm:max-w-20 px-1 sm:px-2 py-1"
               />
               <img

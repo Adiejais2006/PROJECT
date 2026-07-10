@@ -15,7 +15,7 @@ const Add = ({ token }) => {
   const [subCategory, setSubCategory] = useState("Topwear");
   const [bestseller, setBestSeller] = useState(false);
   const [sizes, setSize] = useState([]);
-
+  const [stock, setStock] = useState(0);
   const onSubmitHandler = async (e) => {
     e.preventDefault();
 
@@ -28,7 +28,7 @@ const Add = ({ token }) => {
       formData.append("subCategory", subCategory);
       formData.append("bestseller", bestseller);
       formData.append("sizes", JSON.stringify(sizes));
-
+      formData.append("stock", stock);
       image1 && formData.append("image1", image1);
       image2 && formData.append("image2", image2);
       image3 && formData.append("image3", image3);
@@ -54,6 +54,7 @@ const Add = ({ token }) => {
         setImage2(false);
         setImage3(false);
         setImage4(false);
+        setStock(0);
       } else {
         toast.error(response.data.message);
       }
@@ -144,7 +145,18 @@ const Add = ({ token }) => {
           required
         />
       </div>
-
+      <div className="w-full">
+        <p className="mb-2">Stock</p>
+        <input
+          onChange={(e) => setStock(Number(e.target.value))}
+          className="w-full max-w-[500px] px-3 py-2"
+          type="number"
+          value={stock}
+          min="0"
+          placeholder="Enter Stock"
+          required
+        />
+      </div>
       <div className="flex flex-col sm:flex-row gap-2 w-full sm:gap-8">
         <div>
           <p className="mb-2">Product Category</p>
@@ -273,7 +285,7 @@ const Add = ({ token }) => {
         <label htmlFor="bestseller">Add to Bestseller</label>
       </div>
 
-      <button type="submit" className="w-28 py-3 mt-4 bg-black text-white">
+      <button type="submit" className="w-28  py-3 mt-4 bg-black text-white">
         ADD
       </button>
     </form>

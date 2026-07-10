@@ -12,6 +12,7 @@ const addProduct = async (req, res) => {
       subCategory,
       sizes,
       bestseller,
+      stock,
     } = req.body;
     const image1 = req.files.image1 && req.files.image1[0];
     const image2 = req.files.image2 && req.files.image2[0];
@@ -40,6 +41,7 @@ const addProduct = async (req, res) => {
       sizes: JSON.parse(sizes),
       image: imagesUrl,
       date: Date.now(),
+      stock: Number(stock),
     };
 
     const product = new productModel(productData);

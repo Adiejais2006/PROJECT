@@ -18,7 +18,18 @@ const ShopContextProvider = (props) => {
       toast.error("Select Product Size");
       return;
     }
+    const product = products.find((item) => item._id === itemId);
     let cartData = structuredClone(cartItems);
+    let totalQuantity = 0;
+    if (cartData[itemId]) {
+      for (const selectedSize in cartData[itemId]) {
+        totalQuantity += cartData[itemId][selectedSize];
+      }
+    }
+    if (totalQuantity >= product.stock) {
+      toast.error(`Only ${product.stock} items available`);
+      return;
+    }
     if (cartData[itemId]) {
       if (cartData[itemId][size]) {
         cartData[itemId][size] += 1;
@@ -64,6 +75,22 @@ const ShopContextProvider = (props) => {
   };
 
   const updateQuantity = async (itemId, size, quantity) => {
+    const product = products.find((item) => item._id === itemId);
+    if (!product) return;
+    // Calculate total quantity of this product across all sizes
+    let otherSizesQuantity = 0;
+    if (cartItems[itemId]) {
+      for (const selectedSize in cartItems[itemId]) {
+        if (selectedSize !== size) {
+          otherSizesQuantity += cartItems[itemId][selectedSize];
+        }
+      }
+    }
+    const maxAllowed = Math.max(0, product.stock - otherSizesQuantity);
+    if (quantity > maxAllowed) {
+      toast.error(`Maximum available quantity is ${maxAllowed}`);
+      quantity = maxAllowed;
+    }
     let cartData = structuredClone(cartItems);
     cartData[itemId][size] = quantity;
     setCartItems(cartData);
@@ -171,6 +198,7 @@ const ShopContextProvider = (props) => {
     backendurl,
     token,
     setToken,
+    getProductsData,
   };
 
   return (
