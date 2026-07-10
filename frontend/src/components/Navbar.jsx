@@ -21,6 +21,9 @@ const Navbar = () => {
     setCartItems({});
     navigate("/login");
   };
+
+  const [on, setOn] = useState(false);
+
   return (
     <div className="flex items-center justify-between py-5 font-medium">
       <Link to="/">
@@ -49,20 +52,29 @@ const Navbar = () => {
       </ul>
       <div className="flex items-center gap-6">
         <img
-          onClick={() => setShowSearch(true)}
+          onClick={() => {
+            navigate("/collections");
+            setShowSearch(true);
+          }}
           src={assets.search_icon}
           className="w-5 cursor-pointer"
           alt=""
         />
         <div className="group relative">
           <img
-            onClick={() => (token ? null : navigate("/login"))}
+            onClick={() => {
+              if (!token) navigate("/login");
+              else setOn(!on);
+            }}
             src={assets.profile_icon}
             className="w-5 cursor-pointer"
             alt=""
           />
 
-          <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4">
+          <div
+            onClick={() => setOn(!on)}
+            className={` absolute dropdown-menu right-0 pt-4 ${on ? "block" : "hidden"}`}
+          >
             {/* ----------------DROP DOWN MENU --------------- */}
             {token && (
               <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded ">
