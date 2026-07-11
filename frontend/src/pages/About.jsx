@@ -16,11 +16,11 @@ const About = () => {
         />
         <div className="flex flex-col justify-center gap-6 md:w-2/4 text-gray-600">
           <p>
-            Forever was born in 2010 with a vision to create a brand that
+            CampusCart was born in 2010 with a vision to create a brand that
             embodies quality, style, and sustainability and to provide our
             customers with timeless pieces that they can cherish for years to
-            come. Forever was born in 2010 with a vision to create a brand that
-            embodies quality, style, and sustainability and to provide our
+            come. CampusCart was born in 2010 with a vision to create a brand
+            that embodies quality, style, and sustainability and to provide our
             customers with timeless pieces that they can cherish for years to
             come.
           </p>
@@ -33,11 +33,11 @@ const About = () => {
           </p>
           <b className="text-gray-800">Our Mission</b>
           <p>
-            Forever was born in 2010 with a vision to create a brand that
+            CampusCart was born in 2010 with a vision to create a brand that
             embodies quality, style, and sustainability and to provide our
             customers with timeless pieces that they can cherish for years to
-            come. Forever was born in 2010 with a vision to create a brand that
-            embodies quality, st
+            come. CampusCart was born in 2010 with a vision to create a brand
+            that embodies quality, st
           </p>
         </div>
       </div>{" "}

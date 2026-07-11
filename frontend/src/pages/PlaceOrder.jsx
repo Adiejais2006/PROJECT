@@ -36,7 +36,7 @@ const PlaceOrder = () => {
       key: import.meta.env.VITE_KEY_ID,
       amount: order.amount,
       currency: order.currency,
-      name: "Forever",
+      name: "CampusCart",
       description: "Order Payment",
       order_id: order.id,
       receipt: order.receipt,

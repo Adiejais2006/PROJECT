@@ -24,7 +24,7 @@ const Contact = () => {
             Tel: (+91) 8855996622 <br /> Email: info@ourstore.com
           </p>
           <p className="font-semibold text-xl text-gray-600">
-            Careers At Forever
+            Careers At CampusCart
           </p>
           <p className="text-gray-500">
             Learn more about our teams and job openings
