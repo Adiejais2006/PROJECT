@@ -21,6 +21,7 @@ const Add = ({ token }) => {
   const [sizes, setSize] = useState([]);
   const [stock, setStock] = useState(0);
   const [existingImages, setExistingImages] = useState([]);
+  const [categories, setCategories] = useState([]);
   const fetchProduct = async () => {
     try {
       const response = await axios.post(backendurl + "/api/product/single", {
@@ -41,6 +42,25 @@ const Add = ({ token }) => {
         toast.error(response.data.message);
       }
     } catch (error) {
+      toast.error(error.message);
+    }
+  };
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(backendurl + "/api/category/list");
+      if (response.data.success) {
+        const data = response.data.categories;
+        setCategories(data);
+
+        if (!isEditMode && data.length > 0) {
+          setCategory(data[0].name);
+          setSubCategory(data[0].subCategories[0] || "");
+        }
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
       toast.error(error.message);
     }
   };
@@ -83,8 +103,10 @@ const Add = ({ token }) => {
         setName("");
         setDescription("");
         setPrice("");
-        setCategory("Men");
-        setSubCategory("Topwear");
+        if (categories.length > 0) {
+          setCategory(categories[0].name);
+          setSubCategory(categories[0].subCategories[0] || "");
+        }
         setBestSeller(false);
         setSize([]);
         setImage1(false);
@@ -101,10 +123,12 @@ const Add = ({ token }) => {
     }
   };
   useEffect(() => {
+    fetchCategories();
     if (isEditMode) {
       fetchProduct();
     }
   }, [id]);
+
   return (
     <form
       onSubmit={onSubmitHandler}
@@ -219,24 +243,42 @@ const Add = ({ token }) => {
           <p className="mb-2">Product Category</p>
           <select
             value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            onChange={(e) => {
+              setCategory(e.target.value);
+
+              const selectedCategory = categories.find(
+                (item) => item.name === e.target.value,
+              );
+
+              if (selectedCategory?.subCategories.length > 0) {
+                setSubCategory(selectedCategory.subCategories[0]);
+              } else {
+                setSubCategory("");
+              }
+            }}
             className="w-full px-3 py-2"
           >
-            <option value="Men">Men</option>
-            <option value="Women">Women</option>
-            <option value="Kids">Kids</option>
+            {categories.map((item) => (
+              <option key={item._id} value={item.name}>
+                {item.name}
+              </option>
+            ))}
           </select>
         </div>
         <div>
           <p className="mb-2">Product Subcategory</p>
           <select
+            value={subCategory}
             onChange={(e) => setSubCategory(e.target.value)}
             className="w-full px-3 py-2"
-            value={subCategory}
           >
-            <option value="Topwear">Topwear</option>
-            <option value="Bottomwear">Bottomwear</option>
-            <option value="Winterwear">Winterwear</option>
+            {categories
+              .find((item) => item.name === category)
+              ?.subCategories.map((sub, index) => (
+                <option key={index} value={sub}>
+                  {sub}
+                </option>
+              ))}
           </select>
         </div>
         <div>

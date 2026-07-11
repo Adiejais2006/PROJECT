@@ -8,6 +8,8 @@ import Orders from "./pages/Orders";
 import Login from "./components/Login";
 export const backendurl = import.meta.env.VITE_BACKEND_URL;
 import { ToastContainer } from "react-toastify";
+import CategoryList from "./pages/CategoryList";
+import CategoryAdd from "./pages/CategoryAdd ";
 export const currency = "$";
 const App = () => {
   const [token, setToken] = useState(
@@ -33,6 +35,18 @@ const App = () => {
                 <Route path="/list" element={<List token={token} />} />
                 <Route path="/orders" element={<Orders token={token} />} />
                 <Route path="/edit/:id" element={<Add token={token} />} />
+                <Route
+                  path="/categories"
+                  element={<CategoryAdd token={token} />}
+                />
+                <Route
+                  path="/list-category"
+                  element={<CategoryList token={token} />}
+                />
+                <Route
+                  path="/edit-category/:id"
+                  element={<CategoryAdd token={token} />}
+                />
               </Routes>
             </div>
           </div>
