@@ -14,6 +14,8 @@ const Collections = () => {
   const [categoriesData, setCategoriesData] = useState([]);
   const [priceRange, setPriceRange] = useState("");
   const [selectedSizes, setSelectedSizes] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 12;
   const toggleCategory = (e) => {
     if (category.includes(e.target.value)) {
       setCategory((prev) => prev.filter((item) => item !== e.target.value));
@@ -129,7 +131,6 @@ const Collections = () => {
   useEffect(() => {
     fetchCategories();
   }, []);
-
   const availableSubcategories =
     category.length === 0
       ? [...new Set(categoriesData.flatMap((item) => item.subCategories))]
@@ -145,6 +146,17 @@ const Collections = () => {
       prev.filter((sub) => availableSubcategories.includes(sub)),
     );
   }, [category, categoriesData]);
+
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filterProducts.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct,
+  );
+  const totalPages = Math.ceil(filterProducts.length / productsPerPage);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [category, subcategory, priceRange, selectedSizes, search, showSearch]);
   return (
     <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t border-gray-200">
       {/* Filter Options */}
@@ -302,7 +314,7 @@ const Collections = () => {
         </div>
         {/* MAP PRODUCTS */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
-          {filterProducts.map((item, index) => (
+          {currentProducts.map((item, index) => (
             <ProductItem
               key={index}
               id={item._id}
@@ -312,6 +324,39 @@ const Collections = () => {
             />
           ))}
         </div>
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-2 mt-8 flex-wrap">
+            <button
+              className="px-3 py-1 border rounded disabled:opacity-50"
+              onClick={() => setCurrentPage((prev) => prev - 1)}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+
+            {[...Array(totalPages)].map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentPage(index + 1)}
+                className={`px-3 py-1 border rounded transition-colors ${
+                  currentPage === index + 1
+                    ? "bg-black text-white"
+                    : "hover:bg-gray-200"
+                }`}
+              >
+                {index + 1}
+              </button>
+            ))}
+
+            <button
+              className="px-3 py-1 border rounded disabled:opacity-50"
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
