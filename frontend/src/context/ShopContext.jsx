@@ -11,9 +11,11 @@ const ShopContextProvider = (props) => {
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState({});
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [token, setToken] = useState("");
   const navigate = useNavigate();
   const [wishlistItems, setWishlistItems] = useState([]);
+
   const addToCart = async (itemId, size) => {
     if (!size) {
       toast.error("Select Product Size");
@@ -184,6 +186,8 @@ const ShopContextProvider = (props) => {
 
   const getProductsData = async () => {
     try {
+      setLoading(true);
+      
       const response = await axios.get(backendurl + "/api/product/list");
       if (response.data.success) {
         setProducts(response.data.products);
@@ -193,6 +197,8 @@ const ShopContextProvider = (props) => {
     } catch (error) {
       console.log(error);
       toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -270,6 +276,7 @@ const ShopContextProvider = (props) => {
     getWishlist,
     addToWishlist,
     removeFromWishlist,
+    loading,
   };
 
   return (

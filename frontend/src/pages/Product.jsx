@@ -5,9 +5,10 @@ import { ShopContext } from "../context/ShopContext";
 import { assets } from "../assets/assets";
 import RelatedProducts from "../components/RelatedProducts";
 import { Link } from "react-router-dom";
+import Loader from "../components/Loader";
 const Product = () => {
   const { productId } = useParams();
-  const { products, currency, addToCart } = useContext(ShopContext);
+  const { products, loading, currency, addToCart } = useContext(ShopContext);
   const [productData, setProductData] = useState(false);
   const [image, setImage] = useState("");
   const [size, setSize] = useState("");
@@ -24,7 +25,9 @@ const Product = () => {
   useEffect(() => {
     fetchProductData();
   }, [productId, products]);
-
+  if (loading) {
+    return <Loader />;
+  }
   return productData ? (
     <div className="border-t-2 border-gray-200 pt-10 transition-opacity ease-in duration-500 opacity-100 ">
       <div className="flex gap-12 sm:gap-12 flex-col sm:flex-row">

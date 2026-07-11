@@ -5,8 +5,10 @@ import { useContext } from "react";
 import { assets } from "../assets/assets";
 import Title from "../components/Title";
 import ProductItem from "../components/ProductItem";
+import Loader from "../components/Loader";
 const Collections = () => {
-  const { products, search, showSearch, backendurl } = useContext(ShopContext);
+  const { products, loading, search, showSearch, backendurl } =
+    useContext(ShopContext);
   const [showFilter, setShowFilter] = useState(false);
   const [filterProducts, setFilterProducts] = useState([]);
   const [category, setCategory] = useState([]);
@@ -157,6 +159,9 @@ const Collections = () => {
   useEffect(() => {
     setCurrentPage(1);
   }, [category, subcategory, priceRange, selectedSizes, search, showSearch]);
+  if (loading) {
+    return <Loader />;
+  }
   return (
     <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t border-gray-200">
       {/* Filter Options */}
@@ -313,17 +318,23 @@ const Collections = () => {
           </select>
         </div>
         {/* MAP PRODUCTS */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
-          {currentProducts.map((item, index) => (
-            <ProductItem
-              key={index}
-              id={item._id}
-              name={item.name}
-              price={item.price}
-              image={item.image}
-            />
-          ))}
-        </div>
+        {currentProducts.length === 0 ? (
+          <div className="text-center py-20 text-gray-500">
+            No products found.
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
+            {currentProducts.map((item) => (
+              <ProductItem
+                key={item._id}
+                id={item._id}
+                name={item.name}
+                price={item.price}
+                image={item.image}
+              />
+            ))}
+          </div>
+        )}
         {totalPages > 1 && (
           <div className="flex justify-center items-center gap-2 mt-8 flex-wrap">
             <button
