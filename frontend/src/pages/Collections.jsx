@@ -12,6 +12,8 @@ const Collections = () => {
   const [category, setCategory] = useState([]);
   const [subcategory, setSubcategory] = useState([]);
   const [categoriesData, setCategoriesData] = useState([]);
+  const [priceRange, setPriceRange] = useState("");
+  const [selectedSizes, setSelectedSizes] = useState([]);
   const toggleCategory = (e) => {
     if (category.includes(e.target.value)) {
       setCategory((prev) => prev.filter((item) => item !== e.target.value));
@@ -37,6 +39,16 @@ const Collections = () => {
       setSubcategory((prev) => [...prev, e.target.value]);
     }
   };
+  const toggleSize = (e) => {
+    if (selectedSizes.includes(e.target.value)) {
+      setSelectedSizes((prev) =>
+        prev.filter((size) => size !== e.target.value),
+      );
+    } else {
+      setSelectedSizes((prev) => [...prev, e.target.value]);
+    }
+  };
+  const [sortType, setSortType] = useState("relevant");
   const applyFilter = () => {
     let productsCopy = products.slice();
     if (showSearch && search.length > 0) {
@@ -54,32 +66,70 @@ const Collections = () => {
         subcategory.includes(item.subCategory),
       );
     }
+    if (priceRange) {
+      switch (priceRange) {
+        case "0-500":
+          productsCopy = productsCopy.filter(
+            (item) => item.price >= 0 && item.price <= 500,
+          );
+          break;
+
+        case "500-1000":
+          productsCopy = productsCopy.filter(
+            (item) => item.price > 500 && item.price <= 1000,
+          );
+          break;
+
+        case "1000-2000":
+          productsCopy = productsCopy.filter(
+            (item) => item.price > 1000 && item.price <= 2000,
+          );
+          break;
+
+        case "2000+":
+          productsCopy = productsCopy.filter((item) => item.price > 2000);
+          break;
+
+        default:
+          break;
+      }
+    }
+    if (selectedSizes.length > 0) {
+      productsCopy = productsCopy.filter((item) =>
+        item.sizes.some((size) => selectedSizes.includes(size)),
+      );
+    }
+    switch (sortType) {
+      case "low-high":
+        productsCopy.sort((a, b) => a.price - b.price);
+        break;
+
+      case "high-low":
+        productsCopy.sort((a, b) => b.price - a.price);
+        break;
+
+      default:
+        break;
+    }
+
     setFilterProducts(productsCopy);
   };
   useEffect(() => {
     applyFilter();
-  }, [category, subcategory, search, showSearch, products]);
+  }, [
+    category,
+    subcategory,
+    priceRange,
+    selectedSizes,
+    search,
+    showSearch,
+    products,
+    sortType,
+  ]);
   useEffect(() => {
     fetchCategories();
   }, []);
-  const [sortType, setSortType] = useState("relevant");
-  const sortProducts = () => {
-    let fpCopy = filterProducts.slice();
-    switch (sortType) {
-      case "low-high":
-        setFilterProducts(fpCopy.sort((a, b) => a.price - b.price));
-        break;
-      case "high-low":
-        setFilterProducts(fpCopy.sort((a, b) => b.price - a.price));
-        break;
-      default:
-        applyFilter();
-        break;
-    }
-  };
-  useEffect(() => {
-    sortProducts();
-  }, [sortType]);
+
   const availableSubcategories =
     category.length === 0
       ? [...new Set(categoriesData.flatMap((item) => item.subCategories))]
@@ -148,6 +198,91 @@ const Collections = () => {
             ))}
           </div>
         </div>
+        {/* PRICE FILTER */}
+        <div
+          className={`border border-gray-300 pl-5 py-3 my-5 ${showFilter ? "" : "hidden"} sm:block`}
+        >
+          <p className="mb-3 text-sm font-medium">PRICE</p>
+
+          <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
+            <label className="flex gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="price"
+                value=""
+                checked={priceRange === ""}
+                onChange={(e) => setPriceRange(e.target.value)}
+              />
+              All
+            </label>
+
+            <label className="flex gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="price"
+                value="0-500"
+                checked={priceRange === "0-500"}
+                onChange={(e) => setPriceRange(e.target.value)}
+              />
+              ₹0 - ₹500
+            </label>
+
+            <label className="flex gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="price"
+                value="500-1000"
+                checked={priceRange === "500-1000"}
+                onChange={(e) => setPriceRange(e.target.value)}
+              />
+              ₹500 - ₹1000
+            </label>
+
+            <label className="flex gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="price"
+                value="1000-2000"
+                checked={priceRange === "1000-2000"}
+                onChange={(e) => setPriceRange(e.target.value)}
+              />
+              ₹1000 - ₹2000
+            </label>
+
+            <label className="flex gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="price"
+                value="2000+"
+                checked={priceRange === "2000+"}
+                onChange={(e) => setPriceRange(e.target.value)}
+              />
+              ₹2000+
+            </label>
+          </div>
+        </div>
+        {/* SIZE FILTER */}
+        <div
+          className={`border border-gray-300 pl-5 py-3 my-5 ${
+            showFilter ? "" : "hidden"
+          } sm:block`}
+        >
+          <p className="mb-3 text-sm font-medium">SIZE</p>
+
+          <div className="flex flex-col gap-2 text-sm font-light text-gray-700">
+            {["S", "M", "L", "XL", "XXL"].map((size) => (
+              <label key={size} className="flex gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  value={size}
+                  checked={selectedSizes.includes(size)}
+                  onChange={toggleSize}
+                />
+                {size}
+              </label>
+            ))}
+          </div>
+        </div>
       </div>
       {/* RIGHT SIDE */}
       <div className="flex-1">
@@ -156,10 +291,9 @@ const Collections = () => {
           {/* PRODUCT SORT */}
 
           <select
-            className="border border-gray-3000 text-sm px-2 "
-            onChange={(e) => {
-              setSortType(e.target.value);
-            }}
+            value={sortType}
+            className="border border-gray-300 text-sm px-2"
+            onChange={(e) => setSortType(e.target.value)}
           >
             <option value="relevant">Sort by: Relevant</option>
             <option value="low-high"> Sort by: Low to High</option>
