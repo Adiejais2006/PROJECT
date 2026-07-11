@@ -106,11 +106,11 @@ https://github.com/Adiejais2006/PROJECT
 
 ### Category Management
 
-![Category List](./screenshots/adminlistcategories.png)
+![Category List](./screenshots/adminlistcategory.png)
 
 ### Add Category
 
-![Add Category](./screenshots/adminaddcategories.png)
+![Add Category](./screenshots/adminaddcategiory.png)
 
 ### Order Management
 
