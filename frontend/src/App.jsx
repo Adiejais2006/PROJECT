@@ -14,7 +14,7 @@ import Footer from "./components/Footer";
 import SearchBar from "./components/SearchBar.jsx";
 import { ToastContainer, toast } from "react-toastify";
 import Verify from "../src/pages/Verify.jsx";
-
+import Wishlist from "./pages/Wishlist.jsx";
 const App = () => {
   return (
     <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[10vw] ">
@@ -32,6 +32,7 @@ const App = () => {
         <Route path="/place-order" element={<PlaceOrder />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/verify" element={<Verify />} />
+        <Route path="/wishlist" element={<Wishlist />} />
       </Routes>
       <Footer />
     </div>

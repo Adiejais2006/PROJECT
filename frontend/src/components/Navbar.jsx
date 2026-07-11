@@ -4,6 +4,7 @@ import { NavLink, Link } from "react-router-dom";
 import { useState } from "react";
 import { useContext } from "react";
 import { ShopContext } from "../context/ShopContext";
+import { IoIosHeartEmpty } from "react-icons/io";
 const Navbar = () => {
   const [visible, setVisible] = useState(false);
   const {
@@ -51,6 +52,9 @@ const Navbar = () => {
         </NavLink>
       </ul>
       <div className="flex items-center gap-6">
+        <Link to={token ? "/wishlist" : "/login"} className="hidden sm:block">
+          <IoIosHeartEmpty className="size-6 cursor-pointer hover:text-red-500 transition-colors" />
+        </Link>
         <img
           onClick={() => {
             navigate("/collections");
@@ -112,7 +116,9 @@ const Navbar = () => {
       {/* sidebar meny for small screens  */}
 
       <div
-        className={`absolute top-0 right-0 bottom-0 overflow-hidden bg-white transition-all ${visible ? "w-full" : "w-0"}`}
+        className={`fixed inset-0 z-50 overflow-hidden bg-white transition-all ${
+          visible ? "w-full" : "w-0"
+        }`}
       >
         <div className="flex flex-col text-gray-600">
           <div
@@ -136,6 +142,15 @@ const Navbar = () => {
           >
             COLLECTIONS
           </NavLink>
+          {token && (
+            <NavLink
+              className="py-2 pl-6 border border-gray-300"
+              onClick={() => setVisible(false)}
+              to="/wishlist"
+            >
+              WISHLIST
+            </NavLink>
+          )}
           <NavLink
             className="py-2 pl-6 border border-gray-300 "
             onClick={() => setVisible(false)}
