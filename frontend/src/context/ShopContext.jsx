@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 export const ShopContext = createContext();
 const ShopContextProvider = (props) => {
-  const currency = "$";
+  const currency = "Rs";
   const deliveryfee = 10;
   const backendurl = import.meta.env.VITE_BACKEND_URL;
   const [search, setSearch] = useState("");
