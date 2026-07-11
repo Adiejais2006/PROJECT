@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
+import axios from "axios";
 import { useContext } from "react";
 import { assets } from "../assets/assets";
 import Title from "../components/Title";
 import ProductItem from "../components/ProductItem";
 const Collections = () => {
-  const { products, search, showSearch } = useContext(ShopContext);
+  const { products, search, showSearch, backendurl } = useContext(ShopContext);
   const [showFilter, setShowFilter] = useState(false);
   const [filterProducts, setFilterProducts] = useState([]);
   const [category, setCategory] = useState([]);
   const [subcategory, setSubcategory] = useState([]);
+  const [categoriesData, setCategoriesData] = useState([]);
   const toggleCategory = (e) => {
     if (category.includes(e.target.value)) {
       setCategory((prev) => prev.filter((item) => item !== e.target.value));
@@ -17,7 +19,17 @@ const Collections = () => {
       setCategory((prev) => [...prev, e.target.value]);
     }
   };
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(backendurl + "/api/category/list");
 
+      if (response.data.success) {
+        setCategoriesData(response.data.categories);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const toggleSubcategory = (e) => {
     if (subcategory.includes(e.target.value)) {
       setSubcategory((prev) => prev.filter((item) => item !== e.target.value));
@@ -25,7 +37,6 @@ const Collections = () => {
       setSubcategory((prev) => [...prev, e.target.value]);
     }
   };
-
   const applyFilter = () => {
     let productsCopy = products.slice();
     if (showSearch && search.length > 0) {
@@ -47,10 +58,11 @@ const Collections = () => {
   };
   useEffect(() => {
     applyFilter();
-  }, [category, subcategory, search, showSearch , products]);
-
+  }, [category, subcategory, search, showSearch, products]);
+  useEffect(() => {
+    fetchCategories();
+  }, []);
   const [sortType, setSortType] = useState("relevant");
-
   const sortProducts = () => {
     let fpCopy = filterProducts.slice();
     switch (sortType) {
@@ -65,10 +77,24 @@ const Collections = () => {
         break;
     }
   };
-
   useEffect(() => {
     sortProducts();
   }, [sortType]);
+  const availableSubcategories =
+    category.length === 0
+      ? [...new Set(categoriesData.flatMap((item) => item.subCategories))]
+      : [
+          ...new Set(
+            categoriesData
+              .filter((item) => category.includes(item.name))
+              .flatMap((item) => item.subCategories),
+          ),
+        ];
+  useEffect(() => {
+    setSubcategory((prev) =>
+      prev.filter((sub) => availableSubcategories.includes(sub)),
+    );
+  }, [category, categoriesData]);
   return (
     <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t border-gray-200">
       {/* Filter Options */}
@@ -90,33 +116,17 @@ const Collections = () => {
         >
           <p className="mb-3 text-sm font-medium">CATEGORIES</p>
           <div className="flex flex-col gap-2 text-sm font-light text-gary-700">
-            <p className="flex gap-2 ">
-              <input
-                type="checkbox"
-                className="w-3"
-                value={"Men"}
-                onChange={toggleCategory}
-              />{" "}
-              Men
-            </p>
-            <p className="flex gap-2 ">
-              <input
-                type="checkbox"
-                className="w-3"
-                value={"Women"}
-                onChange={toggleCategory}
-              />{" "}
-              Women
-            </p>
-            <p className="flex gap-2 ">
-              <input
-                type="checkbox"
-                className="w-3"
-                value={"Kids"}
-                onChange={toggleCategory}
-              />
-              Kids
-            </p>
+            {categoriesData.map((item) => (
+              <p key={item._id} className="flex gap-2">
+                <input
+                  type="checkbox"
+                  className="w-3"
+                  value={item.name}
+                  onChange={toggleCategory}
+                />
+                {item.name}
+              </p>
+            ))}
           </div>
         </div>
         {/* SUb Category filtyer */}
@@ -125,33 +135,17 @@ const Collections = () => {
         >
           <p className="mb-3 text-sm font-medium">TYPE</p>
           <div className="flex flex-col gap-2 text-sm font-light text-gary-700">
-            <p className="flex gap-2 ">
-              <input
-                type="checkbox"
-                className="w-3"
-                value={"Topwear"}
-                onChange={toggleSubcategory}
-              />
-              Topwear
-            </p>
-            <p className="flex gap-2 ">
-              <input
-                type="checkbox"
-                className="w-3"
-                value={"Bottomwear"}
-                onChange={toggleSubcategory}
-              />
-              Bottomwear
-            </p>
-            <p className="flex gap-2 ">
-              <input
-                type="checkbox"
-                className="w-3"
-                value={"Winterwear"}
-                onChange={toggleSubcategory}
-              />
-              Winterwear
-            </p>
+            {availableSubcategories.map((sub) => (
+              <p key={sub} className="flex gap-2">
+                <input
+                  type="checkbox"
+                  className="w-3"
+                  value={sub}
+                  onChange={toggleSubcategory}
+                />
+                {sub}
+              </p>
+            ))}
           </div>
         </div>
       </div>
