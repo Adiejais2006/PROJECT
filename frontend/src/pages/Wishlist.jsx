@@ -9,17 +9,20 @@ const Wishlist = () => {
   );
 
   return (
-    <div className="border-t pt-10">
+    <div className="border-t pt-10 px-4 sm:px-8">
       <div className="text-2xl mb-8">
         <Title text1={"MY"} text2={"WISHLIST"} />
       </div>
 
       {wishlistProducts.length === 0 ? (
-        <div className="text-center text-gray-500 py-20">
-          Your wishlist is empty.
+        <div className="flex flex-col items-center justify-center py-20">
+          <p className="text-2xl font-medium mb-2">Your wishlist is empty</p>
+          <p className="text-gray-500">
+            Save your favourite products and they'll appear here.
+          </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6">
           {wishlistProducts.map((item) => (
             <ProductItem
               key={item._id}
