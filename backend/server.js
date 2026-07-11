@@ -10,6 +10,7 @@ import productRoute from "./route/productRoute.js";
 import cartRouter from "./route/cartRoute.js";
 import orderRouter from "./route/orderRoute.js";
 import categoryRouter from "./route/categoryRoute.js";
+import wishlistRouter from "./route/wishlistRoute.js";
 // APP config
 const app = express();
 const port = process.env.PORT || 4000;
@@ -26,6 +27,7 @@ app.use("/api/product", productRoute);
 app.use("/api/cart", cartRouter);
 app.use("/api/order", orderRouter);
 app.use("/api/category", categoryRouter);
+app.use("/api/wishlist", wishlistRouter);
 app.get("/", (req, res) => {
   res.send("hello backend");
 });

@@ -13,6 +13,7 @@ const ShopContextProvider = (props) => {
   const [products, setProducts] = useState([]);
   const [token, setToken] = useState("");
   const navigate = useNavigate();
+  const [wishlistItems, setWishlistItems] = useState([]);
   const addToCart = async (itemId, size) => {
     if (!size) {
       toast.error("Select Product Size");
@@ -59,7 +60,52 @@ const ShopContextProvider = (props) => {
       }
     }
   };
-
+  const addToWishlist = async (itemId) => {
+    if (!token) {
+      toast.error("Login to use wishlist");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        backendurl + "/api/wishlist/add",
+        { itemId },
+        {
+          headers: { token },
+        },
+      );
+      if (response.data.success) {
+        setWishlistItems(response.data.wishlist);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+  const removeFromWishlist = async (itemId) => {
+    if (!token) {
+      toast.error("Login to use wishlist");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        backendurl + "/api/wishlist/remove",
+        { itemId },
+        {
+          headers: { token },
+        },
+      );
+      if (response.data.success) {
+        setWishlistItems(response.data.wishlist);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
   const getCartCount = () => {
     let totalCount = 0;
     for (const items in cartItems) {
@@ -169,14 +215,34 @@ const ShopContextProvider = (props) => {
     }
   };
 
+  const getWishlist = async (token) => {
+    try {
+      const response = await axios.post(
+        backendurl + "/api/wishlist/get",
+        {},
+        {
+          headers: { token },
+        },
+      );
+      if (response.data.success) {
+        setWishlistItems(response.data.wishlist);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+
   useEffect(() => {
     getProductsData();
   }, []);
 
   useEffect(() => {
-    if (!token && localStorage.getItem("token")) {
-      setToken(localStorage.getItem("token"));
-      getUserCart(localStorage.getItem("token"));
+    const storedToken = localStorage.getItem("token");
+    if (!token && storedToken) {
+      setToken(storedToken);
+      getUserCart(storedToken);
+      getWishlist(storedToken);
     }
   }, []);
 
@@ -199,6 +265,11 @@ const ShopContextProvider = (props) => {
     token,
     setToken,
     getProductsData,
+    wishlistItems,
+    setWishlistItems,
+    getWishlist,
+    addToWishlist,
+    removeFromWishlist,
   };
 
   return (
