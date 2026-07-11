@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Men",
+    "subCategories": ["Topwear", "Bottomwear", "Winterwear"]
+  },
+  {
+    "name": "Women",
+    "subCategories": ["Topwear", "Bottomwear", "Winterwear"]
+  },
+  {
+    "name": "Kids",
+    "subCategories": ["Bottomwear", "Winterwear", "Topwear"]
+  }
+]

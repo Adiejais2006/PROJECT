@@ -158,7 +158,7 @@ export const products = [
     },
     {
         _id: "aaaaf",
-        name: "Girls Round Neck Cotton Top",
+        name: "C",
         description: "A lightweight, usually knitted, pullover shirt, close-fitting and with a round neckline and short sleeves, worn as an undershirt or outer garment.",
         price: 140,
         image: [p_img6],
