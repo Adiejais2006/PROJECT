@@ -4,6 +4,7 @@ import { useContext, useState, useEffect } from "react";
 import { ShopContext } from "../context/ShopContext";
 import { assets } from "../assets/assets";
 import RelatedProducts from "../components/RelatedProducts";
+import { Link } from "react-router-dom";
 const Product = () => {
   const { productId } = useParams();
   const { products, currency, addToCart } = useContext(ShopContext);
@@ -12,7 +13,7 @@ const Product = () => {
   const [size, setSize] = useState("");
   const fetchProductData = async () => {
     products.map((item) => {
-      if (item._id == productId) {
+      if (item._id === productId) {
         setProductData(item);
         setImage(item.image[0]);
         return null;
@@ -137,7 +138,19 @@ const Product = () => {
       />
     </div>
   ) : (
-    <div className="opacity-0"></div>
+    <div className="border-t-2 border-gray-200 pt-20 min-h-[60vh] flex flex-col items-center justify-center text-center">
+      <h1 className="text-3xl font-semibold">Product Not Found</h1>
+      <p className="text-gray-500 mt-3">
+        The product you're looking for doesn't exist or may have been removed.
+      </p>
+
+      <Link
+        to="/collections"
+        className="mt-6 bg-black text-white px-6 py-3 inline-block"
+      >
+        Continue Shopping
+      </Link>
+    </div>
   );
 };
 
