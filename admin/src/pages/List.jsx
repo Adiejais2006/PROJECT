@@ -1,18 +1,21 @@
+import { FaEdit } from "react-icons/fa";
+import { MdDeleteOutline } from "react-icons/md";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { backendurl } from "../App";
 import axios from "axios";
 import { currency } from "../App";
 import { toast } from "react-toastify";
-
+import { useNavigate } from "react-router-dom";
 const List = ({ token }) => {
+  const navigate = useNavigate();
   const [list, setList] = useState([]);
   const fetchList = async () => {
     try {
       const response = await axios.get(backendurl + "/api/product/list");
       setList(response.data.products);
     } catch (error) {
-      toast.error(error.message); 
+      toast.error(error.message);
     }
   };
 
@@ -81,14 +84,22 @@ const List = ({ token }) => {
             >
               {item.stock === 0 ? "Out of Stock" : item.stock}
             </p>
-            <p
-              onClick={() => {
-                removeProduct(item._id);
-              }}
-              className="text-right md:text-center cursor-pointer text-lg"
-            >
-              X
-            </p>
+            <div className="flex  justify-center items-center gap-2">
+              <p
+                onClick={() => navigate(`/edit/${item._id}`)}
+                className="cursor-pointer text-lg text-green-700 hover:scale-110 transition-transform"
+              >
+                <FaEdit />
+              </p>
+              <p
+                onClick={() => {
+                  removeProduct(item._id);
+                }}
+                className="text-right md:text-center cursor-pointer text-lg text-red-800 hover:scale-110 transition-transform"
+              >
+                <MdDeleteOutline />
+              </p>
+            </div>
           </div>
         ))}
       </div>

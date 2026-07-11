@@ -1,7 +1,7 @@
 import productModel from "../models/productModel.js";
 import { v2 as cloudinary } from "cloudinary";
 // fucntion for add product
-
+import mongoose from "mongoose";
 const addProduct = async (req, res) => {
   try {
     const {
@@ -85,7 +85,77 @@ const singleProduct = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
-
 // function for update product
-
-export { addProduct, listProducts, removeProduct, singleProduct };
+const updateProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.json({
+        success: false,
+        message: "Invalid product ID",
+      });
+    }
+    const product = await productModel.findById(id);
+    if (!product) {
+      return res.json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+    const {
+      name,
+      description,
+      price,
+      category,
+      subCategory,
+      sizes,
+      bestseller,
+      stock,
+    } = req.body;
+    if (Number(price) < 0 || Number(stock) < 0) {
+      return res.json({
+        success: false,
+        message: "Price and stock cannot be negative",
+      });
+    }
+    product.name = name;
+    product.description = description;
+    product.price = Number(price);
+    product.category = category;
+    product.subCategory = subCategory;
+    product.sizes = JSON.parse(sizes);
+    product.bestseller = bestseller === "true";
+    product.stock = Number(stock);
+    const image1 = req.files.image1 && req.files.image1[0];
+    const image2 = req.files.image2 && req.files.image2[0];
+    const image3 = req.files.image3 && req.files.image3[0];
+    const image4 = req.files.image4 && req.files.image4[0];
+    const images = [image1, image2, image3, image4].filter(Boolean);
+    if (images.length > 0) {
+      const imagesUrl = await Promise.all(
+        images.map(async (item) => {
+          const result = await cloudinary.uploader.upload(item.path, {
+            resource_type: "image",
+          });
+          return result.secure_url;
+        }),
+      );
+      product.image = imagesUrl;
+    }
+    await product.save();
+    return res.json({
+      success: true,
+      message: "Product updated successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+export {
+  addProduct,
+  listProducts,
+  removeProduct,
+  singleProduct,
+  updateProduct,
+};

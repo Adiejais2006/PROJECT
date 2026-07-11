@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { backendurl } from "../App";
 import axios from "axios";
 import { toast } from "react-toastify";
 const Add = ({ token }) => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const isEditMode = Boolean(id);
   const [image1, setImage1] = useState(false);
   const [image2, setImage2] = useState(false);
   const [image3, setImage3] = useState(false);
@@ -16,9 +20,32 @@ const Add = ({ token }) => {
   const [bestseller, setBestSeller] = useState(false);
   const [sizes, setSize] = useState([]);
   const [stock, setStock] = useState(0);
+  const [existingImages, setExistingImages] = useState([]);
+  const fetchProduct = async () => {
+    try {
+      const response = await axios.post(backendurl + "/api/product/single", {
+        productId: id,
+      });
+      if (response.data.success) {
+        const product = response.data.product;
+        setExistingImages(product.image);
+        setName(product.name);
+        setDescription(product.description);
+        setPrice(product.price);
+        setCategory(product.category);
+        setSubCategory(product.subCategory);
+        setBestSeller(product.bestseller);
+        setSize(product.sizes);
+        setStock(product.stock);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-
     try {
       const formData = new FormData();
       formData.append("name", name);
@@ -33,16 +60,26 @@ const Add = ({ token }) => {
       image2 && formData.append("image2", image2);
       image3 && formData.append("image3", image3);
       image4 && formData.append("image4", image4);
-
-      const response = await axios.post(
-        backendurl + "/api/product/add",
-        formData,
-        {
+      let response;
+      if (isEditMode) {
+        response = await axios.put(
+          backendurl + `/api/product/update/${id}`,
+          formData,
+          {
+            headers: { token },
+          },
+        );
+      } else {
+        response = await axios.post(backendurl + "/api/product/add", formData, {
           headers: { token },
-        },
-      );
+        });
+      }
       if (response.data.success) {
         toast.success(response.data.message);
+        if (isEditMode) {
+          navigate("/list");
+          return;
+        }
         setName("");
         setDescription("");
         setPrice("");
@@ -63,7 +100,11 @@ const Add = ({ token }) => {
       toast.error(error.message);
     }
   };
-
+  useEffect(() => {
+    if (isEditMode) {
+      fetchProduct();
+    }
+  }, [id]);
   return (
     <form
       onSubmit={onSubmitHandler}
@@ -75,7 +116,11 @@ const Add = ({ token }) => {
           <label htmlFor="image1">
             <img
               className="w-20"
-              src={!image1 ? assets.upload_area : URL.createObjectURL(image1)}
+              src={
+                image1
+                  ? URL.createObjectURL(image1)
+                  : existingImages[0] || assets.upload_area
+              }
             />
             <input
               onChange={(e) => setImage1(e.target.files[0])}
@@ -87,7 +132,11 @@ const Add = ({ token }) => {
           <label htmlFor="image2">
             <img
               className="w-20"
-              src={!image2 ? assets.upload_area : URL.createObjectURL(image2)}
+              src={
+                image2
+                  ? URL.createObjectURL(image2)
+                  : existingImages[1] || assets.upload_area
+              }
             />
             <input
               onChange={(e) => setImage2(e.target.files[0])}
@@ -99,7 +148,11 @@ const Add = ({ token }) => {
           <label htmlFor="image3">
             <img
               className="w-20"
-              src={!image3 ? assets.upload_area : URL.createObjectURL(image3)}
+              src={
+                image3
+                  ? URL.createObjectURL(image3)
+                  : existingImages[2] || assets.upload_area
+              }
             />
             <input
               onChange={(e) => setImage3(e.target.files[0])}
@@ -111,7 +164,11 @@ const Add = ({ token }) => {
           <label htmlFor="image4">
             <img
               className="w-20"
-              src={!image4 ? assets.upload_area : URL.createObjectURL(image4)}
+              src={
+                image4
+                  ? URL.createObjectURL(image4)
+                  : existingImages[3] || assets.upload_area
+              }
             />
             <input
               onChange={(e) => setImage4(e.target.files[0])}
@@ -286,7 +343,7 @@ const Add = ({ token }) => {
       </div>
 
       <button type="submit" className="w-28  py-3 mt-4 bg-black text-white">
-        ADD
+        {isEditMode ? "UPDATE" : "ADD"}
       </button>
     </form>
   );

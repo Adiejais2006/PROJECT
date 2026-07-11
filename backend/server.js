@@ -9,6 +9,7 @@ import userRouter from "./route/userRouter.js";
 import productRoute from "./route/productRoute.js";
 import cartRouter from "./route/cartRoute.js";
 import orderRouter from "./route/orderRoute.js";
+import categoryRouter from "./route/categoryRoute.js";
 // APP config
 const app = express();
 const port = process.env.PORT || 4000;
@@ -24,6 +25,7 @@ app.use("/api/user", userRouter);
 app.use("/api/product", productRoute);
 app.use("/api/cart", cartRouter);
 app.use("/api/order", orderRouter);
+app.use("/api/category", categoryRouter);
 app.get("/", (req, res) => {
   res.send("hello backend");
 });
