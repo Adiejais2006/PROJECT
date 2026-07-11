@@ -15,7 +15,7 @@ import SearchBar from "./components/SearchBar.jsx";
 import { ToastContainer, toast } from "react-toastify";
 import Verify from "../src/pages/Verify.jsx";
 import Wishlist from "./pages/Wishlist.jsx";
-import NotFound from "./pages/NotFound";
+import NotFound from "./pages/Notfound.jsx" ;
 const App = () => {
   return (
     <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[10vw] ">
