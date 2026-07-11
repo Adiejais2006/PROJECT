@@ -28,6 +28,112 @@ https://github.com/Adiejais2006/PROJECT
 
 ---
 
+# 📸 Application Screenshots
+
+## 🏠 Home
+
+### Hero Section
+
+![Home Hero](./screenshots/home1.png)
+
+### Latest Collection
+
+![Latest Collection](./screenshots/home2.png)
+
+### Best Sellers
+
+![Best Sellers](./screenshots/home3.png)
+
+### Newsletter
+
+![Newsletter](./screenshots/home4.png)
+
+---
+
+## 🛍️ Collections
+
+### Collections Page
+
+![Collections](./screenshots/collections1.png)
+
+### Filters & Search
+
+![Collections Filters](./screenshots/collections2.png)
+
+---
+
+## 🛒 Shopping Cart
+
+### Shopping Cart
+
+![Cart](./screenshots/cart1.png)
+
+### Cart Summary
+
+![Cart Summary](./screenshots/cart2.png)
+
+---
+
+## ❤️ Wishlist
+
+### Wishlist
+
+![Wishlist](./screenshots/wish1.png)
+
+### Wishlist Items
+
+![Wishlist Items](./screenshots/wish2.png)
+
+---
+
+## 📦 Orders
+
+### Order History
+
+![Orders](./screenshots/orders.png)
+
+---
+
+## 🛠️ Admin Panel
+
+### Product Management
+
+![Product List](./screenshots/adminlistprod.png)
+
+### Add Product
+
+![Add Product](./screenshots/adminaddprod.png)
+
+### Category Management
+
+![Category List](./screenshots/adminlistcategories.png)
+
+### Add Category
+
+![Add Category](./screenshots/adminaddcategories.png)
+
+### Order Management
+
+![Order Management](./screenshots/adminvieworders.png)
+
+---
+
+## ℹ️ About Page
+
+![About](./screenshots/about1.png)
+
+![About Section](./screenshots/about2.png)
+
+---
+
+## 📞 Contact Page
+
+![Contact](./screenshots/contact1.png)
+
+![Contact Information](./screenshots/contact2.png)
+
+---
+
 # 🔑 Demo Credentials
 
 ## Customer
@@ -208,11 +314,9 @@ npm install
 ### Admin
 
 ```bash
-cd ../admin
+cd admin
 npm install
 ```
-
----
 
 ## 3. Configure Environment Variables
 
@@ -270,7 +374,12 @@ cd backend
 npm run seed
 ```
 
-This populates MongoDB with sample products and categories.
+This populates MongoDB with:
+
+- 38 demo products
+- 3 product categories
+
+allowing the application to be tested immediately after setup.
 
 ---
 
@@ -292,63 +401,12 @@ cd frontend
 npm run dev
 ```
 
-### Admin Panel
+### Admin
 
 ```bash
 cd admin
-
 npm run dev
 ```
-
----
-
-# 📌 Core Features
-
-### Authentication
-
-- User Registration
-- User Login
-- JWT Authentication
-- Protected Routes
-- Admin Authorization
-
-### Products
-
-- Product Listing
-- Product Details
-- Search
-- Filtering
-- Sorting
-- Pagination
-
-### Cart
-
-- Add to Cart
-- Update Quantity
-- Remove from Cart
-- MongoDB Persistent Cart
-
-### Wishlist
-
-- Add to Wishlist
-- Remove from Wishlist
-- Wishlist Page
-
-### Orders
-
-- Place Order
-- COD
-- Razorpay
-- Order History
-- Live Order Status
-
-### Admin
-
-- Product CRUD
-- Category CRUD
-- Inventory Management
-- Order Management
-- Update Order Status
 
 ---
 
